@@ -42,14 +42,14 @@ public class Portal : MonoBehaviour
     if (_portal.currentPortal == _portalObject.swordPortal2)
     {
       Debug.Log("Teleporting to Sword Pickup 2");
-      _player.transform.position = _portalObject.swordPickUp2.transform.position + new Vector3(-.3f, 0, 0);
+      _player.transform.position = _portalObject.swordPickUp2.transform.position + new Vector3(.5f, 0, 0);
         
     }
     
     if (_portal.currentPortal == _portalObject.swordPickUp2)
     {
       Debug.Log("Teleporting to Sword Portal 2");
-      _player.transform.position = _portalObject.swordPortal2.transform.position + new Vector3(-.3f, 0, 0);
+      _player.transform.position = _portalObject.swordPortal2.transform.position + new Vector3(-.4f, 0, 0);
         
     }  
   }
