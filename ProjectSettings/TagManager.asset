@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Chest
+  - Portals
+  - Sword
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Portals
+  - Water
+  - UI
+  - Chest
+  - Sword
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 2674811335
+    locked: 0
+  - name: Floor
+    uniqueID: 2213608387
+    locked: 0
+  - name: Design
+    uniqueID: 3772726127
+    locked: 0
+  - name: Characters
+    uniqueID: 1814480683
+    locked: 0
+  - name: Colliders
+    uniqueID: 3677972205
+    locked: 0
+  - name: FreeDesign
+    uniqueID: 4265514507
+    locked: 0
