@@ -62,4 +62,6 @@ public class Character : MonoBehaviour
         else if (_moveInput.x < 0)
             _character.flipX = true;
     }
+    
+    
 }

@@ -23,14 +23,14 @@ public class Portal : MonoBehaviour
     {
       Debug.Log("Teleporting to Sword Pickup");
       _player.transform.position = _portalObject.swordPickUp.transform.position + new Vector3(.3f, 0, 0);
-        //new Vector3(-1.548f, -0.3219f, 0);
+        
     }
     
     if (_portal.currentPortal == _portalObject.swordPickUp)
     {
       Debug.Log("Teleporting to Sword Portal");
       _player.transform.position = _portalObject.swordPortal.transform.position + new Vector3(-.3f, 0, 0);
-        //new Vector3(5.481f, 0, 0);
+       
     }
     
     if (_portal.currentPortal == _portalObject.portal1)

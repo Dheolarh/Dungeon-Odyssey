@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -16,7 +17,17 @@ public class GameManager : MonoBehaviour
     public GameObject swordPortal2;
 
     public List<GameObject> allPortals = new List<GameObject>();
+    
+    
+    //Game Stats
+    public int totalCoins = 0;
+    public int totalHealth = 50;
+    public int experience = 1;
 
+    public TextMeshProUGUI coinDisplay;
+    public TextMeshProUGUI healthDisplay;
+    public TextMeshProUGUI expDisplay;
+    public TextMeshProUGUI notifierDisplay;
     public void RegisterPortal(GameObject portal)
     {
         if (!allPortals.Contains(portal))
@@ -61,6 +72,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        PlayerPrefs.DeleteAll();
+        coinDisplay.text = $"Coin: {totalCoins}";
+        healthDisplay.text = $"Health: {totalHealth}";
+        expDisplay.text = $"EXP: {experience}";
+        notifierDisplay.text = "";
+    }
+
     public void AssignScenePortals()
     {
         portal1 = allPortals.Find(p => p.name == "Portal1");
@@ -73,11 +93,22 @@ public class GameManager : MonoBehaviour
 
     public void SaveProgress()
     {
-        Debug.Log("Progress Saved");
+        string data = "";
+        data += totalCoins.ToString() + "|";
+        data += totalHealth.ToString() + "|";
+        data += experience.ToString();
+        
+        PlayerPrefs.SetString("SaveProgress", data);
     }
     
     public void LoadProgress()
     {
-        Debug.Log("Progress Loaded");
+        if (PlayerPrefs.HasKey("SaveProgress")) return;
+        string[] data = PlayerPrefs.GetString("SaveProgress").Split("|");
+        totalCoins = int.Parse(data[1]);
+        totalHealth = int.Parse(data[2]);
+        experience = int.Parse(data[3]);
     }
+
+
 }

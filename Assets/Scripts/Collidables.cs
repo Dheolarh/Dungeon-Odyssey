@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 
@@ -38,35 +39,40 @@ public class Collidables : MonoBehaviour
                 hitObjects.Add(target);
                 break;
             case "Enemy":
-                Debug.Log("Player collided with " + target.name);
                 break;
             case "Portals":
                 currentPortal = target.gameObject;
                 Portal portalScript = target.GetComponent<Portal>();
                 portalScript.Teleport();
-                Debug.Log("Entered " + target.name);
                 hitObjects.Remove(target);
                 break;
             case "Sword":
                 Destroy(target);
+                if (target.gameObject.name == "BasicSword")
+                    GameManager.Instance.notifierDisplay.text = "Equipped Iron Sword!";
+                if (target.gameObject.name == "SoulSword")
+                    GameManager.Instance.notifierDisplay.text = "Equipped Soul Sword!";
+                StartCoroutine(ResetNotifierDislay());
                 break;
         }
 
         
+    }
+    
+    IEnumerator ResetNotifierDislay()
+    {
+        yield return new WaitForSeconds(4);
+        GameManager.Instance.notifierDisplay.text = "";
     }
 
     public void OnCollisionExit2D(Collision2D other)
     {
         GameObject target = other.gameObject;
         var spriteSwitcher = target.GetComponent<SpriteSwitcher>();
-        if (spriteSwitcher == null)
-        {
-            Debug.LogWarning($"No SpriteSwitcher found on {target.name}.");
-        }
+        if (spriteSwitcher == null) return;
         switch (target.tag)
         {
             case "Chest":
-                Debug.Log("Player exited collision with " + target.name);
                 if (spriteSwitcher != null && 
                     (spriteSwitcher.currentState == ObjectState.OpenCoin || spriteSwitcher.currentState == ObjectState.OpenPowerUp))
                     spriteSwitcher.SetState(ObjectState.Looted);
@@ -76,7 +82,6 @@ public class Collidables : MonoBehaviour
     
     private void HandleChestCollision(GameObject chest, SpriteSwitcher switcher)
     {
-        Debug.Log("Player collided with " + chest.name);
         int random = UnityEngine.Random.Range(0, ObjectsSystem.Instance.Chest.ChestActions.Length);
         switcher.SetState(random == 0 ? ObjectState.OpenCoin : ObjectState.OpenPowerUp);
         ObjectsSystem.Instance.Chest.ChestActions[random]();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,7 +15,7 @@ public class ObjectsSystem : MonoBehaviour
 
     // Object systems
     public ChestSystem Chest;
-    public FlagSystem Flag;
+    public SwordSystem Flag;
 
     private void Awake()
     {
@@ -25,7 +26,7 @@ public class ObjectsSystem : MonoBehaviour
 
             // Initialize systems
             Chest = new ChestSystem(this);
-            Flag = new FlagSystem(this);
+            Flag = new SwordSystem(this);
         }
         else
         {
@@ -48,29 +49,46 @@ public class ChestSystem
     private void OnOpenChestCoins()
     {
         int coin = Random.Range(5, 50);
-        GameStats.Instance.totalCoins += coin;
-        Debug.Log($"Picked up {coin} coins. Total coins: {GameStats.Instance.totalCoins}");
+        GameManager.Instance.totalCoins += coin;
+        GameManager.Instance.coinDisplay.text = $"Coins: {GameManager.Instance.totalCoins.ToString()}";
+        GameManager.Instance.notifierDisplay.text =
+            $"Picked Up {coin} coins. Total Coins: {GameManager.Instance.totalCoins}";
+        _system.StartCoroutine(ResetNotifierDislay());
     }
 
     private void OpenChestPowerUp()
     {
-        float powerUp = Random.Range(3f, 10f);
+        int powerUp = Random.Range(3, 10);
         int chance = Random.Range(1, 3);
 
         switch (chance)
         {
             case 1:
-                GameStats.Instance.totalHealth += powerUp;
-                Debug.Log($"Picked up health. Total health: {GameStats.Instance.totalHealth}");
+                GameManager.Instance.totalHealth += powerUp;
+                GameManager.Instance.healthDisplay.text = $"Health: {GameManager.Instance.totalHealth.ToString()}";
+                GameManager.Instance.notifierDisplay.text =
+                    $"Picked Up {powerUp} lives. Total Health: {GameManager.Instance.totalHealth}";
+                _system.StartCoroutine(ResetNotifierDislay());
                 break;
             case 2:
-                GameStats.Instance.stamina += powerUp;
-                Debug.Log($"Picked up stamina. Total stamina: {GameStats.Instance.stamina}");
+                GameManager.Instance.experience += powerUp;
+                GameManager.Instance.expDisplay.text = $"exp: {GameManager.Instance.experience.ToString()}";
+                GameManager.Instance.notifierDisplay.text =
+                    $"Picked Up {powerUp} exp. Total exp: {GameManager.Instance.experience}";
+                _system.StartCoroutine(ResetNotifierDislay());
                 break;
             default:
-                Debug.Log("No power-up found");
+                GameManager.Instance.notifierDisplay.text =
+                    $"Empty";
+                _system.StartCoroutine(ResetNotifierDislay());
                 break;
         }
+    }
+    
+    IEnumerator ResetNotifierDislay()
+    {
+        yield return new WaitForSeconds(2);
+        GameManager.Instance.notifierDisplay.text = "";
     }
 
     // Expose sprites
@@ -79,11 +97,11 @@ public class ChestSystem
     public Sprite GetLootedChest() => _system.lootedChest;
 }
 
-public class FlagSystem
+public class SwordSystem
 {
     private readonly ObjectsSystem _system;
 
-    public FlagSystem(ObjectsSystem system)
+    public SwordSystem(ObjectsSystem system)
     {
         _system = system;
     }
@@ -91,3 +109,4 @@ public class FlagSystem
     // Expose sprites
     public Sprite GetFlag() => _system.closedChest;
 }
+
