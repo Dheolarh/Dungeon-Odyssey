@@ -9,6 +9,12 @@ public class Collidables : MonoBehaviour
     private BoxCollider2D _obj;
     public GameObject currentPortal;
     [SerializeField] private HashSet<GameObject> hitObjects;
+    
+    //notifier element
+    private GameObject _target;
+    private String _notification;
+    private Color _textColor;
+    private float _textSpeed;
 
     private void Awake()
     {
@@ -35,6 +41,7 @@ public class Collidables : MonoBehaviour
         switch (target.tag)
         {
             case "Chest":
+                GameManager.Instance.targetSprite = target;
                 HandleChestCollision(target, spriteSwitcher);
                 hitObjects.Add(target);
                 break;
@@ -49,21 +56,16 @@ public class Collidables : MonoBehaviour
             case "Sword":
                 Destroy(target);
                 if (target.gameObject.name == "BasicSword")
-                    GameManager.Instance.notifierDisplay.text = "Equipped Iron Sword!";
+                    GameManager.Instance.NotifierGameObject(target, "Equipped Basic Sword", Color.green, GameManager.Instance.flowSpeedGameObjects);
                 if (target.gameObject.name == "SoulSword")
-                    GameManager.Instance.notifierDisplay.text = "Equipped Soul Sword!";
-                StartCoroutine(ResetNotifierDislay());
+                    GameManager.Instance.NotifierGameObject(target, "Equipped Soul Sword", Color.black, GameManager.Instance.flowSpeedGameObjects);;
                 break;
         }
 
         
     }
     
-    IEnumerator ResetNotifierDislay()
-    {
-        yield return new WaitForSeconds(4);
-        GameManager.Instance.notifierDisplay.text = "";
-    }
+   
 
     public void OnCollisionExit2D(Collision2D other)
     {

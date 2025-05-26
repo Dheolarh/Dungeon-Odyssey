@@ -9,6 +9,11 @@ public class ObjectsSystem : MonoBehaviour
     public Sprite closedChest;
     public Sprite[] openChest = new Sprite[2];
     public Sprite lootedChest;
+    
+    //notifier element
+    private String _notification;
+    private Color _textColor;
+    private float _textSpeed;
 
     // Static access
     public static ObjectsSystem Instance;
@@ -51,9 +56,7 @@ public class ChestSystem
         int coin = Random.Range(5, 50);
         GameManager.Instance.totalCoins += coin;
         GameManager.Instance.coinDisplay.text = $"Coins: {GameManager.Instance.totalCoins.ToString()}";
-        GameManager.Instance.notifierDisplay.text =
-            $"Picked Up {coin} coins. Total Coins: {GameManager.Instance.totalCoins}";
-        _system.StartCoroutine(ResetNotifierDislay());
+        GameManager.Instance.NotifierSprite($"+ {coin} coins", Color.yellow, GameManager.Instance.flowSpeedSprite);
     }
 
     private void OpenChestPowerUp()
@@ -66,29 +69,19 @@ public class ChestSystem
             case 1:
                 GameManager.Instance.totalHealth += powerUp;
                 GameManager.Instance.healthDisplay.text = $"Health: {GameManager.Instance.totalHealth.ToString()}";
-                GameManager.Instance.notifierDisplay.text =
-                    $"Picked Up {powerUp} lives. Total Health: {GameManager.Instance.totalHealth}";
-                _system.StartCoroutine(ResetNotifierDislay());
+                GameManager.Instance.NotifierSprite($"+ {powerUp} lives", Color.green, GameManager.Instance.flowSpeedSprite);
                 break;
             case 2:
+                Color expColor = new Color(0.259f, 0.808f, 0.922f);
                 GameManager.Instance.experience += powerUp;
                 GameManager.Instance.expDisplay.text = $"exp: {GameManager.Instance.experience.ToString()}";
-                GameManager.Instance.notifierDisplay.text =
-                    $"Picked Up {powerUp} exp. Total exp: {GameManager.Instance.experience}";
-                _system.StartCoroutine(ResetNotifierDislay());
+                GameManager.Instance.NotifierSprite($"+ {powerUp} exp", expColor, GameManager.Instance.flowSpeedSprite);
                 break;
             default:
                 GameManager.Instance.notifierDisplay.text =
                     $"Empty";
-                _system.StartCoroutine(ResetNotifierDislay());
                 break;
         }
-    }
-    
-    IEnumerator ResetNotifierDislay()
-    {
-        yield return new WaitForSeconds(2);
-        GameManager.Instance.notifierDisplay.text = "";
     }
 
     // Expose sprites
