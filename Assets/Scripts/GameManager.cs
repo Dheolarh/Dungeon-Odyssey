@@ -83,6 +83,8 @@ public class GameManager : MonoBehaviour
 
     public void AssignScenePortals()
     {
+        // C#
+        allPortals.RemoveAll(p => p == null);
         portal1 = allPortals.Find(p => p.name == "Portal1");
         portal2 = allPortals.Find(p => p.name == "Portal2");
         swordPickUp = allPortals.Find(p => p.name == "SwordPickUp");

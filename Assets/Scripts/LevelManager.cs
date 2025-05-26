@@ -5,18 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    public static LevelManager Instance;
+    private static LevelManager _instance;
     private void Awake()
     {
-        if (Instance == null)
+        if (_instance == null)
         {
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
+        
     }
     void OnEnable()
     {
@@ -30,31 +31,20 @@ public class LevelManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        StartCoroutine(DelayedPlayerSpawn(scene.name));
-    }
-
-    Vector3 SpawnPointForScene(string sceneName)
-    {
-        if (sceneName == "Level1") return GameManager.Instance.portal2.transform.position;
-        if (sceneName == "Level2") return GameManager.Instance.swordPickUp.transform.position;
-        return Vector3.zero;
+        GameManager.Instance.AssignScenePortals();
+        GameManager.Instance.LoadProgress();
+        if (scene.name == "Level1")
+        {
+            StartCoroutine(SpawnPlayerAfterDelay(1f));
+        }
+        
+        Debug.Log("Loaded " + scene.name);
     }
     
-    IEnumerator DelayedPlayerSpawn(string sceneName)
+    IEnumerator SpawnPlayerAfterDelay(float delay)
     {
-        yield return null; // wait one frame so all Awake/Start methods run
-
-        GameManager.Instance.AssignScenePortals();
-
-        GameObject player = GameObject.FindWithTag("Player");
-        if (player != null)
-        {
-            player.transform.position = SpawnPointForScene(sceneName);
-        }
-        else
-        {
-            Debug.LogWarning("Player not found in scene.");
-        }
+        yield return new WaitForSeconds(delay);
+        Character.Instance.SpawnPlayerIntoScene();
     }
 
 }

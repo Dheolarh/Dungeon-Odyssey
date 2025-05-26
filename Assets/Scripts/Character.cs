@@ -12,7 +12,6 @@ public class Character : MonoBehaviour
     private InputAction _inputAction;
     [SerializeField] private float moveSpeed = 5f;
     private Vector2 _moveInput;
-    private bool _sceneReposition;
 
     void Awake()
     {
@@ -35,12 +34,11 @@ public class Character : MonoBehaviour
         _inputAction.performed += OnMove;
         _inputAction.canceled += OnMove;
     }
-
-    private void Update()
+    
+    public void SpawnPlayerIntoScene()
     {
-        if (SceneManager.GetActiveScene().name == "Level1" && !_sceneReposition)
+        if (SceneManager.GetActiveScene().name == "Level1")
         {
-            _sceneReposition = true;
             transform.position = GameManager.Instance.portal2.transform.position;
         }
     }

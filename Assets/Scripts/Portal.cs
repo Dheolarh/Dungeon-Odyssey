@@ -8,12 +8,13 @@ public class Portal : MonoBehaviour
   private Collidables _portal;
   private GameObject _player;
 
+  
   private void Start()
   {
     GameManager.Instance.RegisterPortal(gameObject);
     _portalObject = GameManager.Instance;;
     _portal = Collidables.Instance;
-    _player = GameObject.FindGameObjectWithTag("Player");;
+    _player = GameObject.FindGameObjectWithTag("Player");
   }
   
 
