@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using TMPro;
 
 public class CameraMovement : MonoBehaviour
 {
