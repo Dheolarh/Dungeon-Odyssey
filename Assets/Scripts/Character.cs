@@ -10,7 +10,7 @@ public class Character : MonoBehaviour
     private BoxCollider2D _boxCollider2D;
     private PlayerInput _playerInput;
     private InputAction _inputAction;
-    [SerializeField] private float moveSpeed = 5f;
+    public float moveSpeed = 5f;
     private Vector2 _moveInput;
 
     void Awake()

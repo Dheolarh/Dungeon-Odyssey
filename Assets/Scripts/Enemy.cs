@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     [Header("Target & Detection")]
     [SerializeField] private Transform mainCharacter;
     [SerializeField] private float detectionRange = .5f;
-    [SerializeField] private float attackRange = .16f;
+    [SerializeField] private float attackRange = .5f;
     [SerializeField] private float attackCooldown = 2f;
 
     [Header("Wandering")]
@@ -25,8 +25,13 @@ public class Enemy : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _agent = GetComponent<NavMeshAgent>();
-        _agent.updateRotation = false; 
-        _agent.updateUpAxis = false;   
+        InitAgent();
+        AssignCharacter();
+        _wanderTimer = wanderInterval;
+    }
+
+    private void AssignCharacter()
+    {
         if (mainCharacter == null)
         {
             GameObject playerObj = GameObject.FindWithTag("Player");
@@ -39,7 +44,17 @@ public class Enemy : MonoBehaviour
                 Debug.LogWarning("Player not found. Make sure it has the 'Player' tag.");
             }
         }
-        _wanderTimer = wanderInterval;
+    }
+    private void InitAgent()
+    {
+        _agent.updateRotation = false; 
+        _agent.updateUpAxis = false; 
+        _agent.speed = 0.5f;
+        _agent.acceleration = 2f;
+        _agent.angularSpeed = 0f; 
+        _agent.stoppingDistance = 0.2f; 
+        _agent.autoBraking = false; // Disable auto-braking to allow smooth wandering
+        _agent.isStopped = false; 
     }
 
     private void Update()
@@ -61,7 +76,7 @@ public class Enemy : MonoBehaviour
                         break;
                 }
             }
-            else if (directionToPlayer.x > 0 && !isAttacking)
+            else if (directionToPlayer.x > 0)
             {
                 switch (isAttacking)
                 {
@@ -78,7 +93,7 @@ public class Enemy : MonoBehaviour
             if (distanceToPlayer <= attackRange)
             {
                 Debug.Log("Enemy attacking the target!");
-                // TODO: Add attack logic with cooldown
+                TryAttack();
             }
         }
         else
@@ -89,21 +104,43 @@ public class Enemy : MonoBehaviour
 
     public void SetTarget(Transform newTarget)
     {
+        if (newTarget == null) return;
         _target = newTarget;
+        _agent.speed = Character.Instance.moveSpeed /2;
+        _agent.acceleration = 4f;
         _agent.SetDestination(_target.position);
     }
+    
+    
+    private float _lastAttackTime;
+    private void TryAttack()
+    {
+        if (Time.time - _lastAttackTime >= attackCooldown)
+        {
+            Debug.Log("Enemy attacking the player!");
+            _lastAttackTime = Time.time;
+            
+        }
+    }
+
 
     private void Wander()
     {
-       _wanderTimer += Time.deltaTime;
-
-        if (_wanderTimer >= wanderInterval)
+        _agent.speed = 0.5f;
+        _agent.acceleration = 2f;
+        _wanderTimer += Time.deltaTime;
+        if (_wanderTimer >= wanderInterval && !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
         {
             Vector3 randomDestination = GetRandomNavMeshLocation(wanderRange);
             _agent.SetDestination(randomDestination);
             _wanderTimer = 0f;
         }
+        if (_agent.velocity.x < 0)
+            _spriteRenderer.flipX = false;
+        else if (_agent.velocity.x > 0)
+            _spriteRenderer.flipX = true;
     }
+
 
     private Vector3 GetRandomNavMeshLocation(float range)
     {
