@@ -15,11 +15,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float wanderRange = 1f;
     [SerializeField] private float wanderInterval = 2f;
     private float _wanderTimer;
+    
+    [Header("Stats")]
+    public int health = 100;
 
     public bool isAttacking;
 
 
     private NavMeshAgent _agent;
+
 
     private void Start()
     {
@@ -53,15 +57,25 @@ public class Enemy : MonoBehaviour
         _agent.acceleration = 2f;
         _agent.angularSpeed = 0f; 
         _agent.stoppingDistance = 0.2f; 
-        _agent.autoBraking = false; // Disable auto-braking to allow smooth wandering
+        _agent.autoBraking = false;
         _agent.isStopped = false; 
     }
 
     private void Update()
     {
+        if (health <= 0)
+        {
+            Destroy(gameObject);
+        }
+        if(gameObject != null) Coordination();
+    }
+
+    private void Coordination()
+    {
+        
         float distanceToPlayer = Vector3.Distance(transform.position, mainCharacter.position);
         Vector3 directionToPlayer = mainCharacter.position - transform.position;
-
+         
         if (distanceToPlayer <= detectionRange)
         {
             if (directionToPlayer.x < 0)
@@ -89,10 +103,9 @@ public class Enemy : MonoBehaviour
                 }
             }
             SetTarget(mainCharacter);
-    
+             
             if (distanceToPlayer <= attackRange)
             {
-                Debug.Log("Enemy attacking the target!");
                 TryAttack();
             }
         }
@@ -121,6 +134,26 @@ public class Enemy : MonoBehaviour
             _lastAttackTime = Time.time;
             
         }
+    }
+    
+    public void TakeDamage(int hit)
+    {
+        int damage = hit;
+        string swordName = Collidables.Instance._swordName;
+    
+        switch (swordName)
+        {
+            case "BasicSword":
+                health -= damage * 2;
+                break;
+            case "SoulSword":
+                health -= damage * 4;
+                break;
+            default:
+                health -= damage;
+                break;
+        }
+        Debug.Log($"Attacked with {swordName}, enemy health = {health}");
     }
 
 

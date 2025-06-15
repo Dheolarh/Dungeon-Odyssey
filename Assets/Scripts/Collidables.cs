@@ -5,17 +5,24 @@ using System.Collections.Generic;
 
 public class Collidables : MonoBehaviour
 {
+    private Enemy _currentEnemy;
+    public Enemy GetCurrentEnemy() => _currentEnemy;
+    private Character _character;
     public static Collidables Instance;
     private BoxCollider2D _obj;
     public GameObject currentPortal;
     [SerializeField] private HashSet<GameObject> hitObjects;
+
+    public bool withEnemey;
     
     //notifier element
     private GameObject _target;
     private String _notification;
     private Color _textColor;
     private float _textSpeed;
-
+    
+    //collections
+    public string _swordName;
     private void Awake()
     {
         Instance = this;
@@ -23,6 +30,7 @@ public class Collidables : MonoBehaviour
 
     void Start()
     {
+        _character = Character.Instance;
         hitObjects = new HashSet<GameObject>();
         _obj = GetComponent<BoxCollider2D>();
     }
@@ -46,6 +54,8 @@ public class Collidables : MonoBehaviour
                 hitObjects.Add(target);
                 break;
             case "Enemy":
+                withEnemey = true;
+                _currentEnemy = other.gameObject.GetComponent<Enemy>();
                 break;
             case "Portals":
                 currentPortal = target.gameObject;
@@ -56,9 +66,16 @@ public class Collidables : MonoBehaviour
             case "Sword":
                 Destroy(target);
                 if (target.gameObject.name == "BasicSword")
-                    GameManager.Instance.NotifierGameObject(target, "Equipped Basic Sword", Color.green, GameManager.Instance.flowSpeedGameObjects);
+                {
+                    _swordName = "BasicSword";
+                    GameManager.Instance.NotifierGameObject(target, "Equipped Basic Sword", Color.green, GameManager.Instance.flowSpeedGameObjects); 
+                }
+
                 if (target.gameObject.name == "SoulSword")
+                {
+                    _swordName = "SoulSword";
                     GameManager.Instance.NotifierGameObject(target, "Equipped Soul Sword", Color.black, GameManager.Instance.flowSpeedGameObjects);;
+                }
                 break;
         }
 
@@ -78,6 +95,10 @@ public class Collidables : MonoBehaviour
                 if (spriteSwitcher != null && 
                     (spriteSwitcher.currentState == ObjectState.OpenCoin || spriteSwitcher.currentState == ObjectState.OpenPowerUp))
                     spriteSwitcher.SetState(ObjectState.Looted);
+                break;
+            case "Enemy":
+                withEnemey = false;
+                _currentEnemy = null;
                 break;
         }
     }

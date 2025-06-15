@@ -9,7 +9,8 @@ public class Character : MonoBehaviour
     private StateMachine _stateMachine;
     public Animator animator;
     public Vector2 facingDirection { get; private set; } = Vector2.down;
-    public bool isAttacking { get; private set; }
+    public bool isAttacking { get;  set; }
+    public float attackDuration = 0.5f; // Duration of the attack animation
 
 
     
@@ -127,18 +128,16 @@ public class Character : MonoBehaviour
     
     public void OnAttack(InputAction.CallbackContext ctx)
     {
-        if (ctx.performed)
-        {
-            isAttacking = true;
-            animator.SetBool("IsIdle", false);
-            _stateMachine.ChangeState(new AttackState(this, _stateMachine));
-        }
-        else if (ctx.canceled)
-        {
-            isAttacking = false;
-            _stateMachine.ChangeState(new IdleState(this, _stateMachine));
-            animator.SetBool("IsIdle", true);
-        }
+        animator.SetBool("IsIdle", false);
+        _stateMachine.ChangeState(new AttackState(this, _stateMachine));
+    }
+    
+    public void SwitchToIdleState()
+    {
+        animator.ResetTrigger("OnAttack");
+        isAttacking = false;
+        _stateMachine.ChangeState(new IdleState(this, _stateMachine));
+        animator.SetBool("IsIdle", true);
     }
     
     

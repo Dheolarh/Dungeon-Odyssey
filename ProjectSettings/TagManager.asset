@@ -7,6 +7,7 @@ TagManager:
   - Chest
   - Portals
   - Sword
+  - Enemy
   layers:
   - Default
   - TransparentFX
